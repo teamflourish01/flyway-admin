@@ -17,6 +17,8 @@ import {
 } from "@chakra-ui/react";
 import { CloseIcon, DeleteIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import { MdDelete } from "react-icons/md";
+import { IoIosAdd } from "react-icons/io";
+import ReactQuill from "react-quill";
 
 const EditAboutus = () => {
   const { id } = useParams();
@@ -25,11 +27,35 @@ const EditAboutus = () => {
   const [logoUrl, setlogoUrl] = useState([]);
   const [singleImg, setSingleImg] = useState("");
   const [selctSinImg, setselectSingImg] = useState("");
+  const [singletwoImg, setSingletwoImg] = useState("");
+  const [selctSintwoImg, setselectSingtwoImg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const Navigate = useNavigate();
   const url = process.env.REACT_APP_DEV_URL;
+  const toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+    ["link", "formula"],
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    [{ direction: "rtl" }], // text direction
 
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+
+  const module = {
+    toolbar: toolbarOptions,
+  };
   const getAboutusById = async () => {
     try {
       const response = await fetch(`${url}/aboutus/${id}`);
@@ -63,31 +89,90 @@ const EditAboutus = () => {
     setSingleImg("");
     setselectSingImg("");
   };
-  // Logo Images
-  const handleMultipleImage = (e) => {
-    const file = e.target.files[0];
-    setSelectedImages([...selectedImages, file]);
+  // two Image
+  const handleSingletwoImage = (e) => {
+    let file = e.target.files[0];
     if (file) {
-      let reader = new FileReader();
-      reader.onloadend = () => {
-        setlogoUrl([...logoUrl, reader.result]);
-      };
-      reader.readAsDataURL(file);
+      setSingletwoImg(file);
+
+      // Display selected Img
+      const imageUrl = URL.createObjectURL(file);
+      setselectSingtwoImg(imageUrl);
+    } else {
+      setSingletwoImg("");
+      setselectSingtwoImg("");
     }
   };
-  const handleDeleteMultipleImage = (index) => {
-    setlogoUrl(logoUrl.filter((_, i) => i !== index));
-    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+  const handleDeleteSingletwoImage = () => {
+    setSingletwoImg("");
+    setselectSingtwoImg("");
   };
-  const handleDBImgdelete = async (index) => {
-    let dup = [...item.logoimages];
-    dup.splice(index, 1);
-    setItem({ ...item, logoimages: dup });
-  };
+
   const handleInput = (e) => {
     const { name, value } = e.target;
 
-    setItem({ ...item, [name]: value });
+    // setItem({ ...item, [name]: value });
+    setItem((prevItem) => ({
+      ...prevItem,
+      [name]: value,
+    }));
+  };
+
+  //ourjurney section
+
+  const handleJourneyChange = (index, e) => {
+    const { name, value } = e.target;
+    setItem((prevItem) => {
+      let updatedJourney = [...prevItem.ourjouerney];
+      updatedJourney[index][name] = value;
+      return { ...prevItem, ourjouerney: updatedJourney };
+    });
+  };
+
+  const handleDataChange = (jIndex, dIndex, e) => {
+    const { name, value } = e.target;
+    setItem((prevItem) => {
+      let updatedJourney = [...prevItem.ourjouerney];
+      updatedJourney[jIndex].data[dIndex][name] = value;
+      return { ...prevItem, ourjouerney: updatedJourney };
+    });
+  };
+  // Add New Journey Section
+  const addJourneySection = () => {
+    setItem((prevItem) => ({
+      ...prevItem,
+      ourjouerney: [
+        ...prevItem.ourjouerney,
+        { heading: "", data: [{ number: "", text: "" }] },
+      ],
+    }));
+  };
+
+  // Remove Journey Section
+  const removeJourneySection = (index) => {
+    setItem((prevItem) => {
+      let updatedJourney = [...prevItem.ourjouerney];
+      updatedJourney.splice(index, 1);
+      return { ...prevItem, ourjouerney: updatedJourney };
+    });
+  };
+
+  //Add More Data Fields Inside a Journey Section
+  const addDataField = (jIndex) => {
+    setItem((prevItem) => {
+      let updatedJourney = [...prevItem.ourjouerney];
+      updatedJourney[jIndex].data.push({ number: "", text: "" });
+      return { ...prevItem, ourjouerney: updatedJourney };
+    });
+  };
+
+  //Remove Data Field from a Journey Section
+  const removeDataField = (jIndex, dIndex) => {
+    setItem((prevItem) => {
+      let updatedJourney = [...prevItem.ourjouerney];
+      updatedJourney[jIndex].data.splice(dIndex, 1);
+      return { ...prevItem, ourjouerney: updatedJourney };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -98,19 +183,19 @@ const EditAboutus = () => {
     if (singleImg) {
       formData.append("banner", singleImg);
     }
-    if (selectedImages.length > 0) {
-      for (let x of selectedImages) {
-        formData.append("logoimages", x);
-      }
+    if (singletwoImg) {
+      formData.append("banner_two", singletwoImg);
     }
+
     formData.append("dup", JSON.stringify(dup));
+    formData.append("ourjouerney", JSON.stringify(dup.ourjouerney || []));
     try {
       const response = await axios.put(`${url}/aboutus/edit/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast({
           title: "Data Edit Successfuly",
           description: response.data.msg,
@@ -120,15 +205,6 @@ const EditAboutus = () => {
           isClosable: true,
         });
         Navigate("/admin/page/");
-      } else {
-        toast({
-          title: "Data Not Update ",
-          description: response.data.msg,
-          status: "error",
-          position: "top",
-          duration: 7000,
-          isClosable: true,
-        });
       }
     } catch (error) {
       console.error("Update faild", error);
@@ -202,7 +278,7 @@ const EditAboutus = () => {
                   name="heading"
                   value={item.heading}
                   onChange={handleInput}
-                  mb={4}
+                  mb={1}
                   maxLength={160}
                 />
               </FormControl>
@@ -210,7 +286,7 @@ const EditAboutus = () => {
                 <FormLabel htmlFor="description" color={"#add8e6"}>
                   Description
                 </FormLabel>
-                <Textarea
+                {/* <Textarea
                   id="description"
                   placeholder="Enter your message"
                   mb={4}
@@ -218,12 +294,23 @@ const EditAboutus = () => {
                   value={item.description}
                   onChange={handleInput}
                   maxLength={750}
+                /> */}
+                <ReactQuill
+                  modules={module}
+                  theme="snow"
+                  value={item.description}
+                  onChange={(newContent) =>
+                    setItem((prevItem) => ({
+                      ...prevItem,
+                      description: newContent,
+                    }))
+                  }
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel htmlFor="banner" color={"#add8e6"}>
-                  Banner Image
+                <FormLabel htmlFor="banner" color={"#add8e6"} mt={2}>
+                  AboutUs Image
                 </FormLabel>
                 <Input
                   variant="flushed"
@@ -276,20 +363,45 @@ const EditAboutus = () => {
                   </Flex>
                 </FormControl>
               )}
-              <FormControl isRequired mb={4}>
-                <FormLabel htmlFor="bannerheading" color={"#add8e6"}>
-                  Banner Heading
+              <FormControl isRequired>
+                <FormLabel htmlFor="heading_two" color={"#add8e6"}>
+                  Founder Heading
                 </FormLabel>
                 <Input
                   variant="flushed"
-                  id="bannerheading"
+                  id="heading_two"
                   type="text"
                   placeholder="Enter your Heading"
                   mb={4}
-                  name="bannerheading"
-                  value={item.bannerheading}
+                  name="heading_two"
+                  value={item.heading_two}
                   onChange={handleInput}
                   maxLength={160}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel htmlFor="description_two" color={"#add8e6"}>
+                  Founder Message
+                </FormLabel>
+                {/* <Textarea
+                  id="description_two"
+                  placeholder="Enter your Description"
+                  mb={4}
+                  name="description_two"
+                  value={item.description_two}
+                  onChange={handleInput}
+                  maxLength={750}
+                /> */}
+                <ReactQuill
+                  modules={module}
+                  theme="snow"
+                  value={item.description_two}
+                  onChange={(newContent) =>
+                    setItem((prevItem) => ({
+                      ...prevItem,
+                      description_two: newContent,
+                    }))
+                  }
                 />
               </FormControl>
             </form>
@@ -302,18 +414,18 @@ const EditAboutus = () => {
             borderRadius={"20px"}
           >
             <form encType="multipart/form-data">
-              <FormControl isRequired>
-                <FormLabel htmlFor="bannerdescription" color={"#add8e6"}>
-                  Banner Description
+              <FormControl isRequired mt={2}>
+                <FormLabel htmlFor="vision" color={"#add8e6"}>
+                  vision
                 </FormLabel>
                 <Textarea
-                  id="bannerdescription"
+                  id="vision"
                   placeholder="Enter your Description"
                   mb={4}
-                  name="bannerdescription"
-                  value={item.bannerdescription}
+                  name="vision"
+                  value={item.vision}
                   onChange={handleInput}
-                  maxLength={750}
+                  maxLength={345}
                 />
               </FormControl>
               <FormControl isRequired>
@@ -330,21 +442,8 @@ const EditAboutus = () => {
                   maxLength={345}
                 />
               </FormControl>
-              <FormControl isRequired>
-                <FormLabel htmlFor="vision" color={"#add8e6"}>
-                  vision
-                </FormLabel>
-                <Textarea
-                  id="vision"
-                  placeholder="Enter your Description"
-                  mb={4}
-                  name="vision"
-                  value={item.vision}
-                  onChange={handleInput}
-                  maxLength={345}
-                />
-              </FormControl>
-              <FormControl isRequired>
+
+              {/* <FormControl isRequired>
                 <FormLabel htmlFor="goals" color={"#add8e6"}>
                   Goals
                 </FormLabel>
@@ -357,83 +456,133 @@ const EditAboutus = () => {
                   onChange={handleInput}
                   maxLength={345}
                 />
-              </FormControl>
+              </FormControl> */}
 
               <FormControl>
-                <FormLabel htmlFor="logoimages" color={"#add8e6"}>
-                  Logo Images
+                <FormLabel htmlFor="banner_two" color={"#add8e6"}>
+                  Founder Image
                 </FormLabel>
                 <Input
                   variant="flushed"
-                  id="logoimages"
+                  id="banner_two"
                   type="file"
-                  name="logoimages"
+                  name="banner_two"
                   accept="image/*"
-                  onChange={handleMultipleImage}
+                  onChange={handleSingletwoImage}
                   mb={1}
-                  multiple
                 />
-                <Text mb={6}>
+                <Text mb={5}>
                   <span style={{ fontWeight: "bold" }}>Note</span>:File Size
-                  Should Be Upto 242x105px size will allow Only
+                  Should Be Upto 1320x693px size will allow Only
                 </Text>
-                <Flex wrap="wrap">
-                  {item.logoimages &&
-                    item.logoimages.map((e, i) => (
-                      <Flex key={i} position="relative">
-                        <Image
-                          key={i}
-                          src={`${url}/aboutus/${e}`}
-                          alt={`Image ${i}`}
-                          style={{
-                            width: "200px",
-                            marginRight: "10px",
-                            marginBottom: "10px",
-                          }}
-                        />
-                        <MdDelete
-                          size={"40px"}
-                          color="red"
-                          cursor="pointer"
-                          style={{
-                            position: "absolute",
-                            top: "4px",
-                            right: "0",
-                            marginTop: "-15px",
-                            marginRight: "-8px",
-                          }}
-                          onClick={() => handleDBImgdelete(i)}
-                        />
-                      </Flex>
-                    ))}
+              </FormControl>
+              <FormControl>
+                {selctSintwoImg && (
+                  <Flex>
+                    <img
+                      src={selctSintwoImg}
+                      alt="selected img"
+                      style={{
+                        width: "200px",
+                        marginBottom: "10px",
+                        margin: "5px",
+                      }}
+                    />
+                    <MdDelete
+                      color="red"
+                      cursor={"pointer"}
+                      size={"30px"}
+                      onClick={handleDeleteSingletwoImage}
+                    />
+                  </Flex>
+                )}
+              </FormControl>
+              {!selctSintwoImg && item.banner_two && (
+                <FormControl mr={4}>
+                  <Flex alignItems="center" position="relative">
+                    <img
+                      src={`${url}/aboutus/${item.banner_two}`}
+                      alt="selected img"
+                      style={{
+                        width: "200px",
 
-                  {logoUrl.map((e, i) => (
-                    <Flex key={i} position="relative">
-                      <Image
-                        src={e}
-                        style={{
-                          width: "200px",
-                          marginRight: "10px",
-                          marginBottom: "10px",
-                        }}
+                        margin: "5px",
+                        marginBottom: "10px",
+                      }}
+                    />
+                  </Flex>
+                </FormControl>
+              )}
+              {/* ourjouerney Fields */}
+              {item.ourjouerney?.map((journey, jIndex) => (
+                <Box key={jIndex} border="1px solid #ccc" p={4} mb={4}>
+                  <Flex justifyContent="flex-end">
+                    <MdDelete
+                      color="red"
+                      cursor={"pointer"}
+                      size={"30px"}
+                      ml="auto"
+                      onClick={() => removeJourneySection(jIndex)}
+                    />
+                  </Flex>
+                  <Input
+                    type="text"
+                    name="heading"
+                    placeholder="Enter Heading"
+                    value={journey.heading}
+                    onChange={(e) => handleJourneyChange(jIndex, e)}
+                  />
+
+                  {/* <Button
+                    colorScheme="red"
+                    onClick={() => removeJourneySection(jIndex)}
+                  >
+                    Remove Section
+                  </Button> */}
+
+                  {journey.data.map((data, dIndex) => (
+                    <Box key={dIndex} display="flex" gap="10px" mt={3}>
+                      <Input
+                        type="text"
+                        name="number"
+                        placeholder="Enter Number"
+                        value={data.number}
+                        onChange={(e) => handleDataChange(jIndex, dIndex, e)}
+                      />
+                      <Input
+                        type="text"
+                        name="text"
+                        placeholder="Enter Description"
+                        value={data.text}
+                        onChange={(e) => handleDataChange(jIndex, dIndex, e)}
                       />
                       <MdDelete
-                        size={"40px"}
                         color="red"
-                        cursor="pointer"
-                        style={{
-                          position: "absolute",
-                          top: "4px",
-                          right: "0",
-                          marginTop: "-15px",
-                          marginRight: "-8px",
-                        }}
-                        onClick={() => handleDeleteMultipleImage(i)}
+                        cursor={"pointer"}
+                        size={"40px"}
+                        onClick={() => removeDataField(jIndex, dIndex)}
                       />
-                    </Flex>
+                      {/* <Button
+                        colorScheme="red"
+                        onClick={() => removeDataField(jIndex, dIndex)}
+                      >
+                        Remove
+                      </Button> */}
+                    </Box>
                   ))}
-                </Flex>
-              </FormControl>
+                  {/* <IoIosAdd onClick={() => addDataField(jIndex)}/> */}
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => addDataField(jIndex)}
+                    mt={1}
+                  >
+                    Add More
+                  </Button>
+                </Box>
+              ))}
+              <Button colorScheme="green" onClick={addJourneySection}>
+                Add New Section
+              </Button>
             </form>
           </Box>
         </Flex>

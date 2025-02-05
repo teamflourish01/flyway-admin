@@ -116,11 +116,19 @@ import WhyChoose from "./WhyChoose";
 import AddWhyChoose from "./AddWhyChoose";
 import ViewWhyChoose from "./ViewWhyChoose";
 import EditWhyChoose from "./EditWhyChoose";
+
 import Price from "./Price";
 import AddPrice from "./AddPrice";
 import EditPrice from "./EditPrice";
 import ViewPrice from "./ViewPrice";
 import AdditionalService from "./AdditionalService";
+
+import Ourteam from "./Ourteam";
+import AddOurteam from "./AddOurteam";
+import EditOurteam from "./EditOurteam";
+import ViewOurteam from "./ViewOurteam";
+import EditPrivacypolicey from "./EditPrivacypolicey";
+
 
 const Admin = () => {
   const sidebar = useDisclosure();
@@ -315,6 +323,16 @@ const Admin = () => {
           }}
         >
           Testimonials
+        </NavItem>
+        <NavItem
+          _hover={{ bgColor: "black", color: "#ADD8E6" }}
+          icon={FaUser}
+          onClick={() => {
+            sidebar.onClose();
+            navigate("/admin/ourteam");
+          }}
+        >
+          OurTeam
         </NavItem>
         <NavItem
           _hover={{ bgColor: "black", color: "#ADD8E6" }}
@@ -575,6 +593,13 @@ const Admin = () => {
               path="/testimonials/edit/:id"
               element={<EditTestimonials />}
             />
+            <Route path="/ourteam" element={<Ourteam />} />
+            <Route path="/ourteam/add" element={<AddOurteam />} />
+            <Route path="/ourteam/:id" element={<ViewOurteam />} />
+            <Route
+              path="/ourteam/edit/:id"
+              element={<EditOurteam />}
+            />
             <Route path="/ebrochure" element={<Ebrochure />} />
             <Route path="/ebrochure/add" element={<AddEbrochure />} />
 
@@ -599,11 +624,16 @@ const Admin = () => {
             <Route path="/page/topproduct" element={<TopProducts />} />
             <Route path="/inquiry" element={<Inquiry />} />
             <Route path="/inquiry/:id" element={<ViewInquiry />} />
+
             <Route path="/price" element={<Price/>} />
             <Route path="/price/:id" element={<ViewPrice/>} />
             <Route path="/price/add" element={<AddPrice/>} />
             <Route path="/price/edit/:id" element={<EditPrice/>}  />
             <Route path="/service"  element={<AdditionalService/>} />
+
+
+            <Route path="/privacy" element={<EditPrivacypolicey />} />
+            <Route path="/privacy/edit/:id" element={<EditPrivacypolicey />} />
 
           </Routes>
           <Box rounded="md" h="" />

@@ -95,7 +95,7 @@ const Blog = () => {
     <Box p="4">
       <Flex gap={5} justifyContent={"space-between"}>
         <Flex gap={5}>
-          <Button
+          {/* <Button
             variant={"ghost"}
             bgColor={"black"}
             _hover={{ color: "black", bgColor: "#add8e6" }}
@@ -104,7 +104,7 @@ const Blog = () => {
             onClick={() => navigate("/admin/blogcategory")}
           >
             Blog Category
-          </Button>
+          </Button> */}
           <Button
             leftIcon={<AddIcon />}
             variant={"ghost"}
@@ -148,8 +148,7 @@ const Blog = () => {
           <Thead bgColor={"black"}>
             <Tr>
               <Th color={"#add8e6"}>#</Th>
-              <Th color={"#add8e6"}>Name</Th>
-              <Th color={"#add8e6"}>Category</Th>
+              <Th color={"#add8e6"}>Name</Th>              
               <Th color={"#add8e6"}>Action</Th>
             </Tr>
           </Thead>
@@ -176,7 +175,7 @@ const Blog = () => {
                     >
                       {e?.name}
                     </Td>
-                    <Td>{e?.category?.name}</Td>
+                    
                     <Td>
                       <ButtonGroup>
                         <Button

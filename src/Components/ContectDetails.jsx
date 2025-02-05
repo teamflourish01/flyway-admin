@@ -22,7 +22,7 @@ const Contectdetails = () => {
 
   const getContectDetails = async () => {
     try {
-      let data = await fetch(`${url}/contect`);
+      let data = await fetch(`${url}/sociallink`);
       data = await data.json();
       console.log(data, "data");
       setProduct(data.data);
