@@ -21,6 +21,7 @@ const Pages = () => {
   const [newsheading, setNewsheading] = useState([]);
   const [homeItem, sethomeItem] = useState([]);
   const [whyChooseUs, setWhyChooseUs] = useState([]);
+  const [policy, setPolicy] = useState([]);
   const navigate = useNavigate();
   const url = process.env.REACT_APP_DEV_URL;
 
@@ -62,10 +63,22 @@ const Pages = () => {
         console.log(error);
       }
     };
+    const getPrivacyPolicyData = async () => {
+      try {
+        let res = await fetch(`${url}/privacy`);        
+        let data = await res.json();
+        setPolicy(data.data);
+        console.log("policy Data",data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getAboutus();
     getNewsHeading();
     getHome();
     getHomeBenifits();
+    getPrivacyPolicyData();
   }, []);
 
   return (
@@ -113,7 +126,7 @@ const Pages = () => {
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
                     onClick={() =>
-                      navigate(`/admin/newsheading/edit/${newsheading[0]._id}`)
+                      navigate(`/admin/newsheading/edit/${newsheading[0]?._id}`)
                     }
                   >
                     Edit
@@ -142,7 +155,7 @@ const Pages = () => {
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
                     onClick={() =>
-                      navigate(`/admin/home/edit/${homeItem[0]._id}`)
+                      navigate(`/admin/home/edit/${homeItem[0]?._id}`)
                     }
                   >
                     Edit
@@ -150,7 +163,27 @@ const Pages = () => {
                 </ButtonGroup>
               </Td>
             </Tr>
-           
+            <Tr>
+              <Td> 4 </Td>
+              <Td>Privacy Policey</Td>
+              <Td>
+                <ButtonGroup>
+                  <Button
+                    leftIcon={<BiEditAlt />}
+                    border="1px solid #add8e6"
+                    variant={"outline"}
+                    _hover={{ bgColor: "#add8e6", color: "black" }}
+                    onClick={() =>
+                      navigate(
+                        `/admin/privacy/edit/${policy.length > 0 && policy[0]._id}`
+                      )
+                    }
+                  >
+                    Edit
+                  </Button>
+                </ButtonGroup>
+              </Td>
+            </Tr>
             <Tr>
               <Td> 5 </Td>
               <Td> Home Our Products</Td>
@@ -173,9 +206,7 @@ const Pages = () => {
                     border="1px solid #add8e6"
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
-                    onClick={() =>
-                      navigate(`/admin/page/ourproduct`)
-                    }
+                    onClick={() => navigate(`/admin/page/ourproduct`)}
                   >
                     Edit
                   </Button>
@@ -204,9 +235,7 @@ const Pages = () => {
                     border="1px solid #add8e6"
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
-                    onClick={() =>
-                      navigate(`/admin/page/topproduct`)
-                    }
+                    onClick={() => navigate(`/admin/page/topproduct`)}
                   >
                     Edit
                   </Button>
