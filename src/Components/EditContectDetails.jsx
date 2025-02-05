@@ -24,6 +24,10 @@ const EditContectDetails = () => {
     officeaddress: "",
     addresslink: "",
     officenumber: "",
+    pintrestlink:"",
+    linkedinlink:"",
+    driblelink:"",
+    behanselink:"",
   });
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -32,7 +36,7 @@ const EditContectDetails = () => {
 
   const getContectById = async () => {
     try {
-      const response = await fetch(`${url}/contect/${id}`);
+      const response = await fetch(`${url}/sociallink/${id}`);
       const data = await response.json();
       setItem(data.data);
 
@@ -57,7 +61,7 @@ const EditContectDetails = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`${url}/contect/edit/${id}`, {
+      const response = await fetch(`${url}/sociallink/edit/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -162,6 +166,36 @@ const EditContectDetails = () => {
                   mb={4}
                 />
               </FormControl>
+              <FormControl mb={4} isRequired>
+                <FormLabel htmlFor="instalink" color={"#add8e6"}>
+                  Pinterest
+                </FormLabel>
+                <Input
+                  id="instalink"
+                  type="text"
+                  variant={"flushed"}
+                  placeholder="Enter your Heading"
+                  name="pintrestlink"
+                  value={item.pintrestlink}
+                  onChange={handleInput}
+                  mb={4}
+                />
+              </FormControl>
+              <FormControl mb={4} isRequired>
+                <FormLabel htmlFor="instalink" color={"#add8e6"}>
+                  Behance
+                </FormLabel>
+                <Input
+                  id="instalink"
+                  type="text"
+                  variant={"flushed"}
+                  placeholder="Enter your Heading"
+                  name="behanselink"
+                  value={item.behanselink}
+                  onChange={handleInput}
+                  mb={4}
+                />
+              </FormControl>
             </Box>
             <Box
               backgroundColor={"lightwhite"}
@@ -185,6 +219,36 @@ const EditContectDetails = () => {
                   mb={4}
                 />
               </FormControl>
+              <FormControl mb={4} isRequired>
+                <FormLabel htmlFor="driblelink" color={"#add8e6"}>
+                  Dribbble
+                </FormLabel>
+                <Input
+                  id="driblelink"
+                  type="text"
+                  variant={"flushed"}
+                  placeholder="Enter your Heading"
+                  name="driblelink"
+                  value={item.driblelink}
+                  onChange={handleInput}
+                  mb={4}
+                />
+              </FormControl>
+              <FormControl mb={4} isRequired>
+                <FormLabel htmlFor="ytlink" color={"#add8e6"}>
+                  Linkedin
+                </FormLabel>
+                <Input
+                  id="ytlink"
+                  type="text"
+                  variant={"flushed"}
+                  placeholder="Enter your Heading"
+                  name="linkedinlink"
+                  value={item.linkedinlink}
+                  onChange={handleInput}
+                  mb={4}
+                />
+              </FormControl>
 
               <FormControl mb={4} isRequired>
                 <FormLabel htmlFor="officenumber" color={"#add8e6"}>
@@ -192,7 +256,7 @@ const EditContectDetails = () => {
                 </FormLabel>
                 <Input
                   id="officenumber"
-                  type="number"
+                  type="text"
                   variant={"flushed"}
                   placeholder="Enter your contect-Number"
                   name="officenumber"

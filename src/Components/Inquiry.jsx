@@ -46,7 +46,7 @@ const Inquiry = () => {
   };
   const handleDelete = async (id) => {
     try {
-      let data = await fetch(`${url}/inquiry/delete/${id}`, {
+      let data = await fetch(`${url}/email/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const Inquiry = () => {
     setLoading(true);
     try {
       let res = await fetch(
-        `${url}/inquiry?page=${page}&limit=12&search=${search}`
+        `${url}/email?page=${page}&limit=12&search=${search}`
       );
       const data = await res.json();
       setUser(data.data);

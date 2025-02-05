@@ -26,20 +26,8 @@ const AddBlog = () => {
   const [blog, setBlog] = useState({
     name: "",
     banner_image: "",
-    bannerimg_alt: "",
-    first_image: "",
-    firstimg_alt: "",
-    first_toggle: false,
-    text1: "",
-    text2: "",
-    second_image: "",
-    secondimg_alt: "",
-    second_toggle: false,
-    text3: "",
-    third_image: "",
-    thirdimg_alt: "",
-    third_toggle: false,
-    category: "",
+    bannerimg_alt: "",    
+    text1: "",    
     slug: "",
     meta_title: "",
     meta_description: "",
@@ -48,17 +36,13 @@ const AddBlog = () => {
   const [category, setCategory] = useState([]);
   const [banner, setBanner] = useState("");
   const [first, setFirst] = useState("");
-  const [second, setSecond] = useState("");
-  const [third, setThird] = useState("");
+  
   const [bannerUrl, setBannerUrl] = useState("");
-  const [firstUrl, setFirstUrl] = useState("");
-  const [secondUrl, setSecondUrl] = useState("");
-  const [thirdUrl, setThirdUrl] = useState("");
+  
   const url = process.env.REACT_APP_DEV_URL;
   const [text1, setText1] = useState("");
-  const [text2, setText2] = useState("");
-  const [text3, setText3] = useState("");
-  let audio = new Audio(switchAudio);
+  
+  
   const toast = useToast();
   const navigate = useNavigate();
   const [slug, setSlug] = useState("");
@@ -87,19 +71,7 @@ const AddBlog = () => {
     toolbar: toolbarOptions,
   };
 
-  //                    get Dagta
-
-  const getCategory = async () => {
-    try {
-      let data = await fetch(`${url}/blogcategory`);
-      data = await data.json();
-      setCategory(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //                  handle changes
+   //                  handle changes
 
   const handleImageChanger = (e, img, url) => {
     let file = e.target.files[0];
@@ -125,21 +97,7 @@ const AddBlog = () => {
     setBlog({ ...blog, bannerimg_alt: bnnrImgText });
   };
 
-  const handleFimgText = (event) => {
-    let fstImgText = [...blog.firstimg_alt];
-    fstImgText = event.target.value;
-    setBlog({ ...blog, firstimg_alt: fstImgText });
-  };
-  const handleSecImgText = (event) => {
-    let secImgText = [...blog.secondimg_alt];
-    secImgText = event.target.value;
-    setBlog({ ...blog, secondimg_alt: secImgText });
-  };
-  const handleThrdImgText = (event) => {
-    let thrdImgText = [...blog.thirdimg_alt];
-    thrdImgText = event.target.value;
-    setBlog({ ...blog, thirdimg_alt: thrdImgText });
-  };
+
   //                  upload data
 
   const handleSave = async (e) => {
@@ -148,25 +106,10 @@ const AddBlog = () => {
     let dup = { ...blog };
     if (text1) {
       dup.text1 = text1;
-    }
-    if (text2) {
-      dup.text2 = text2;
-    }
-    if (text3) {
-      dup.text3 = text3;
-    }
+    }    
     if (banner) {
       formData.append("banner", banner);
-    }
-    if (first) {
-      formData.append("first", first);
-    }
-    if (second) {
-      formData.append("second", second);
-    }
-    if (third) {
-      formData.append("third", third);
-    }
+    }    
     let newSlug = generateSlug(slug);
     dup.slug = newSlug;
     setBlog(dup);
@@ -214,9 +157,7 @@ const AddBlog = () => {
     setBlog({ ...blog, [name]: value });
   };
 
-  useEffect(() => {
-    getCategory();
-  }, []);
+  
   return (
     <Box p="4">
       <form encType="multipart/form-data" onSubmit={handleSave}>
@@ -267,12 +208,12 @@ const AddBlog = () => {
                   handleChange(e);
                   setSlug(generateSlug(e.target.value));
                 }}
-                maxLength={45}
+                // maxLength={45}
               />
             </FormControl>
             <br />
             <EditPermalink slug={slug} folder={"blog"} setSlug={setSlug} />
-            <FormControl>
+            {/* <FormControl>
               <FormLabel color={"#add8e6"}>Category</FormLabel>
               <select
                 style={{
@@ -294,7 +235,7 @@ const AddBlog = () => {
                     </option>
                   ))}
               </select>
-            </FormControl>
+            </FormControl> */}
             <br />
             <FormControl>
               <FormLabel color={"#add8e6"}>Banner Image</FormLabel>
@@ -333,7 +274,7 @@ const AddBlog = () => {
               </form>
             </FormControl>
             <br />
-            <FormControl>
+            {/* <FormControl>
               <FormLabel color={"#add8e6"}>Toggle First Image</FormLabel>
               <Text>Note: ON Switch for Showing Image Before Text</Text>
               <div class="checkbox-wrapper-55">
@@ -350,10 +291,10 @@ const AddBlog = () => {
                   <span class="switch-right">No</span>
                 </label>
               </div>
-            </FormControl>
+            </FormControl> */}
 
-            <FormControl>
-              <FormLabel color={"#add8e6"}>First Text</FormLabel>
+             <FormControl>
+              <FormLabel color={"#add8e6"}>Description</FormLabel>
               <ReactQuill
                 modules={module}
                 theme="snow"
@@ -362,7 +303,7 @@ const AddBlog = () => {
               />
             </FormControl>
             <br />
-            <FormControl>
+           {/* <FormControl>
               <FormLabel color={"#add8e6"}>First Image</FormLabel>
               {firstUrl && (
                 <Flex>
@@ -514,7 +455,7 @@ const AddBlog = () => {
                   Should Be Upto 849x425px size will allow Only
                 </Text>
               </form>
-            </FormControl>
+            </FormControl> */}
             <br />
           </Box>
         </Flex>

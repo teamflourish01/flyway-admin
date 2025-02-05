@@ -26,7 +26,7 @@ const InquiryForm = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/inquiry/send",
+        "http://localhost:8080/email/send-email",
         data
       );
       //alert(response.data);

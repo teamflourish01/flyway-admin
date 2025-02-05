@@ -12,7 +12,7 @@ const ViewInquiry = () => {
 
   const getData = async () => {
     try {
-      let data = await fetch(`${url}/inquiry/${id}`);
+      let data = await fetch(`${url}/email/${id}`);
       data = await data.json();
       setUser(data.data);
     } catch (error) {
@@ -26,7 +26,7 @@ const ViewInquiry = () => {
     <Box textAlign={"left"} p="4" ml={15}>
       <Flex gap="20px">
         <Text fontSize={"xl"} fontWeight={"semibold"}>
-          View Category Details
+          View Inquiery Details
         </Text>
       </Flex>
       <br />
@@ -64,11 +64,11 @@ const ViewInquiry = () => {
         bgColor={"#eef1f4"}
         fontSize={"medium"}
       >
-        {user?.phone}
+        {user?.contactNumber}
       </Box>
       <br />
       <Text fontWeight={"semibold"} fontSize={"xl"}>
-        City
+        Subject
       </Text>
       <Box
         padding="10px 20px"
@@ -76,7 +76,7 @@ const ViewInquiry = () => {
         bgColor={"#eef1f4"}
         fontSize={"medium"}
       >
-        {user?.city}
+        {user?.subject}
       </Box>
       <br />
       <Text fontWeight={"semibold"} fontSize={"xl"}>
@@ -88,7 +88,7 @@ const ViewInquiry = () => {
         bgColor={"#eef1f4"}
         fontSize={"medium"}
       >
-        {user?.message}
+        {user?.Message}
       </Box>
       <br />
       
