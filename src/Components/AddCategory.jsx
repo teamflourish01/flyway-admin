@@ -19,7 +19,6 @@ const AddCategory = () => {
     name: "",
   });
   const [slug, setSlug] = useState("");
-
   const navigate = useNavigate();
   const toast = useToast();
   const handleChange = (e) => {
