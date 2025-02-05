@@ -25,6 +25,7 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import EditPermalink from "./EditPermalink";
 import generateSlug from "../util/generateSlug";
+import ReactQuill from "react-quill";
 
 const EditProduct = () => {
   const { slugname } = useParams();
@@ -49,8 +50,35 @@ const EditProduct = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const [slug, setSlug] = useState("");
+  const [text1, setText1] = useState("");
+  const [text2, setText2] = useState("");
+  const [text3, setText3] = useState("");
 
   const url = process.env.REACT_APP_DEV_URL;
+
+  const toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+    ["link", "formula"],
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    [{ direction: "rtl" }], // text direction
+
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+
+  const module = {
+    toolbar: toolbarOptions,
+  };
 
   //                         getting data
 
@@ -71,9 +99,9 @@ const EditProduct = () => {
       data = await data.json();
       console.log(data);
       setProduct(data.data);
-      setSpec(data.data?.specification);
-      setDetail(data.data?.details);
-      setFeature(data.data?.performance);
+      setText1(data?.data.text1);
+      setText2(data?.data.text2);
+      setText3(data?.data.text3);
       setSlug(data.data?.slug);
     } catch (error) {
       console.log(error);
@@ -165,109 +193,16 @@ const EditProduct = () => {
     imagetext[i] = e.target.value;
     setImgText([...imagetext]);
   };
-  const handleMarkLocal = (index) => {
-    // let dup = [...mark];
-    // let dupUrl = [...markUrl];
-    // let dupText = [...markText];
-    // dupText.splice(i, 1);
-    // dup.splice(i, 1);
-    // dupUrl.splice(i, 1);
-    // setMark(dup);
-    // setMarkUrl(dupUrl);
-    // setMarkText(dupText);
 
-    setMark((prev) => prev.filter((_, i) => i !== index));
-    setMarkUrl((prev) => prev.filter((_, i) => i !== index));
-    setMarkText((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleMarkChanger = (e) => {
-    let file = e.target.files[0];
-    setMark([...mark, file]);
-    if (file) {
-      let reader = new FileReader();
-      reader.onload = () => {
-        setMarkUrl([...markUrl, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    }
-    e.target.value = "";
-  };
-
-  const handleAddFeature = () => {
-    setProduct({ ...product, key_features: [...product.key_features, ""] });
-  };
-
-  const handleKeyFeature = (e, i) => {
-    let newFeature = [...product.key_features];
-    newFeature[i] = e.target.value;
-    setProduct({ ...product, key_features: newFeature });
-  };
-
-  const handleremoveFeature = (i) => {
-    let dup = [...product?.key_features];
-    dup.splice(i, 1);
-    setProduct({ ...product, key_features: dup });
-  };
-
-  const handleMarkTextData = (e, i) => {
-    let dup = [...product.mark_text];
-    dup[i] = e.target.value;
-    setProduct({ ...product, mark_text: dup });
-  };
   const handleImgTextData = (e, i) => {
     let dup = [...product.image_alt];
     dup[i] = e.target.value;
     setProduct({ ...product, image_alt: dup });
   };
-  const handleMark = (index) => {
-    let dup = [...product.mark];
-    dup.splice(index, 1);
-
-    // Remove img-Text
-    let dupMarkText = [...product.mark_text];
-    dupMarkText.splice(index, 1);
-    setProduct({ ...product, mark: dup, mark_text: dupMarkText });
-  };
-
-  const handleDetailChange = (parameter, value) => {
-    setDetail((prevData) => ({
-      ...prevData,
-      [parameter]: value,
-    }));
-  };
-
-  const addDetailEntry = () => {
-    if (detailParameter && detailValue) {
-      setDetail((prevData) => ({
-        ...prevData,
-        [detailParameter]: detailValue,
-      }));
-      setDetailParameter("");
-      setDetailValue("");
-    }
-  };
-
-  const addFeatureEntry = () => {
-    if (featureParameter && featureValue) {
-      setFeature((prev) => ({
-        ...prev,
-        [featureParameter]: featureValue,
-      }));
-    }
-  };
-
-  const handleFeatureChange = (parameter, value) => {
-    setFeature((prevData) => ({
-      ...prevData,
-      [parameter]: value,
-    }));
-  };
-
-  //                                      send data
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    debugger;
     if (!slug) {
       toast({
         title: "Please Add Slug",
@@ -281,40 +216,34 @@ const EditProduct = () => {
     }
     let formData = new FormData();
     let dup = { ...product };
+    if (text1) {
+      dup.text1 = text1;
+    }
+    if (text2) {
+      dup.text2 = text2;
+    }
+    if (text3) {
+      dup.text3 = text3;
+    }
     if (image.length > 0) {
       // dup.image=[...dup.image,...image]
       for (let x of image) {
-        formData.append("product", x);
+        formData.append("image", x);
       }
-    }
-    if (mark.length > 0) {
-      // dup.mark=[...dup.mark,...mark]
-      for (let x of mark) {
-        formData.append("marks", x);
-      }
-    }
-    if (markText.length > 0) {
-      dup.mark_text = [...dup.mark_text, ...markText];
     }
     if (imgText.length > 0) {
       dup.image_alt = [...dup.image_alt, ...imgText];
     }
-    if (spec) {
-      dup.specification = spec;
-    }
-    if (detail) {
-      dup.details = detail;
-    }
-    if (feature) {
-      dup.performance = feature;
-    }
+
     let newSlug = generateSlug(slug);
     dup.slug = newSlug;
     console.log(dup, "dup");
     formData.append("dup", JSON.stringify(dup));
-
     try {
-      let response = await axios.post(`${url}/product/edit/${slugname}`, formData);      
+      let response = await axios.post(
+        `${url}/product/edit/${slugname}`,
+        formData
+      );
       if (response.status == 200) {
         toast({
           title: "Product Edited Successfully",
@@ -325,7 +254,7 @@ const EditProduct = () => {
           isClosable: true,
         });
         navigate("/admin/product");
-      } 
+      }
     } catch (error) {
       console.log(error);
       toast({
@@ -418,156 +347,9 @@ const EditProduct = () => {
                 name="description"
                 value={product.description}
                 onChange={(e) => handleChange(e)}
-                
               />
             </FormControl>
             <br />
-            <FormControl isRequired>
-              <Flex justifyContent={"space-between"}>
-                <FormLabel color={"#add8e6"}>Key Features</FormLabel>
-                <Button onClick={handleAddFeature}>+</Button>
-              </Flex>
-              {product?.key_features?.map((e, i) => {
-                return (
-                  <Flex gap={"20px"} mt={"10px"}>
-                    <Input
-                      key={i}
-                      value={e}
-                      onChange={(event) => handleKeyFeature(event, i)}
-                    />
-                    <Button onClick={() => handleremoveFeature(i)}>-</Button>
-                  </Flex>
-                );
-              })}
-            </FormControl>
-            <br />
-            <FormControl isRequired>
-              <FormLabel color={"#add8e6"}>Testing </FormLabel>
-              {product?.mark &&
-                product.mark.map((e, i) => {
-                  return (
-                    <Flex key={i}>
-                      <Box>
-                        <Image src={`${url}/product/${e}`} w={"200px"} />
-                        <Input
-                          value={product.mark_text[i]}
-                          onChange={(event) => handleMarkTextData(event, i)}
-                        />
-                      </Box>
-                      <MdDelete
-                        color="red"
-                        cursor={"pointer"}
-                        size={"30px"}
-                        onClick={() => handleMark(i)}
-                      />
-                    </Flex>
-                  );
-                })}
-              {markUrl &&
-                markUrl.map((e, i) => {
-                  return (
-                    <Flex key={i}>
-                      <Box>
-                        <Image src={e} w={"200px"} />
-                        <Input
-                          value={markText[i]}
-                          onChange={(event) => handleMarkText(event, i)}
-                        />
-                      </Box>
-                      <MdDelete
-                        color="red"
-                        cursor={"pointer"}
-                        size={"30px"}
-                        onClick={() => handleMarkLocal(i)}
-                      />
-                    </Flex>
-                  );
-                })}
-              <form encType="multipart/form-data">
-                <input
-                  required
-                  type="file"
-                  name="marks"
-                  onChange={(e) => handleMarkChanger(e)}
-                />
-              </form>
-            </FormControl>
-            <br />
-            <Text fontWeight={"bold "}>Specifications</Text>
-            <br />
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Parameter</Th>
-                  <Th>Value</Th>
-                </Tr>
-              </Thead>
-
-              <Tbody>
-                {spec &&
-                  Object.entries(spec).map(([parameter, value], index) => (
-                    <Tr key={parameter}>
-                      <Td>
-                        <Input type="text" value={parameter} />
-                      </Td>
-                      <Td>
-                        <Input
-                          type="text"
-                          value={value}
-                          onChange={(e) =>
-                            handleValueChange(parameter, e.target.value)
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <Button
-                          onClick={() => {
-                            let dup = { ...spec };
-                            delete dup[parameter];
-                            setSpec(dup);
-                          }}
-                        >
-                          <IoIosRemove size="25px" />
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-              </Tbody>
-            </Table>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Add New</Th>
-                  <Th>Add New</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Parameter"
-                      value={newParameter}
-                      onChange={(e) => setNewParameter(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Value"
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Button onClick={addNewEntry}>
-                      <GrFormAdd size="25px" />
-                    </Button>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-            <Box></Box>
           </Box>
           <Box
             backgroundColor={"white"}
@@ -606,7 +388,7 @@ const EditProduct = () => {
                         <Box>
                           <Image width="200px" src={`${url}/product/${e}`} />
                           <Input
-                            value={product.image_alt[i]}
+                            value={product?.image_alt[i]}
                             onChange={(event) => handleImgTextData(event, i)}
                           />
                         </Box>
@@ -621,166 +403,45 @@ const EditProduct = () => {
                   );
                 })}
               <br />
-
               <input
                 type="file"
-                name="product"
+                name="image"
                 onChange={(e) => handleFileChanger(e)}
               />
-
               <Text>
                 <span style={{ fontWeight: "bold" }}>Note</span>:File Size
                 Should Be Less than 500KB and 500x500px size will allow Only
               </Text>
             </FormControl>
+            <FormControl>
+              <FormLabel color={"#add8e6"}>First Text</FormLabel>
+              <ReactQuill
+                modules={module}
+                theme="snow"
+                value={text1}
+                onChange={setText1}
+              />
+            </FormControl>
             <br />
-            <Text fontWeight={"bold "}>Product Details</Text>
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Second Text</FormLabel>
+              <ReactQuill
+                modules={module}
+                theme="snow"
+                value={text2}
+                onChange={setText2}
+              />
+            </FormControl>
             <br />
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Parameter</Th>
-                  <Th>Value</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {detail &&
-                  Object.entries(detail).map(([parameter, value], index) => (
-                    <Tr key={parameter}>
-                      <Td>
-                        <Input type="text" value={parameter} />
-                      </Td>
-                      <Td>
-                        <Input
-                          type="text"
-                          value={value}
-                          onChange={(e) =>
-                            handleDetailChange(parameter, e.target.value)
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <Button
-                          onClick={() => {
-                            let dup = { ...detail };
-                            delete dup[parameter];
-                            setDetail(dup);
-                          }}
-                        >
-                          <IoIosRemove size="25px" />
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-              </Tbody>
-            </Table>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Add New</Th>
-                  <Th>Add New</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Parameter"
-                      value={detailParameter}
-                      onChange={(e) => setDetailParameter(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Value"
-                      value={detailValue}
-                      onChange={(e) => setDetailValue(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Button onClick={addDetailEntry}>
-                      <GrFormAdd size="25px" />
-                    </Button>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-            <br />
-            <Text fontWeight={"bold "}>Performance Feature</Text>
-            <br />
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Parameter</Th>
-                  <Th>Value</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {feature &&
-                  Object.entries(feature).map(([parameter, value], index) => (
-                    <Tr key={parameter}>
-                      <Td>
-                        <Input type="text" value={parameter} />
-                      </Td>
-                      <Td>
-                        <Input
-                          type="text"
-                          value={value}
-                          onChange={(e) =>
-                            handleFeatureChange(parameter, e.target.value)
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <Button
-                          onClick={() => {
-                            let dup = { ...feature };
-                            delete dup[parameter];
-                            setFeature(dup);
-                          }}
-                        >
-                          <IoIosRemove size="25px" />
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-              </Tbody>
-            </Table>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Add New</Th>
-                  <Th>Add New</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Parameter"
-                      value={featureParameter}
-                      onChange={(e) => setFeatureParameter(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Input
-                      type="text"
-                      placeholder="New Value"
-                      value={featureValue}
-                      onChange={(e) => setFeatureValue(e.target.value)}
-                    />
-                  </Td>
-                  <Td>
-                    <Button onClick={addFeatureEntry}>
-                      <GrFormAdd size="25px" />
-                    </Button>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Third Text</FormLabel>
+              <ReactQuill
+                modules={module}
+                theme="snow"
+                value={text3}
+                onChange={setText3}
+              />
+            </FormControl>
           </Box>
         </Flex>
         <br />

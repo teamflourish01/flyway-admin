@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import "../styles/Admin.css";
+import { AiFillCustomerService } from "react-icons/ai";
 
 import { BiSolidUser, BiLogoGmail } from "react-icons/bi";
 import {
@@ -29,6 +30,7 @@ import {
 import {
   FaCertificate,
   FaFilePdf,
+  FaIndianRupeeSign,
   FaMobileScreen,
   FaStore,
   FaTicketSimple,
@@ -114,6 +116,11 @@ import WhyChoose from "./WhyChoose";
 import AddWhyChoose from "./AddWhyChoose";
 import ViewWhyChoose from "./ViewWhyChoose";
 import EditWhyChoose from "./EditWhyChoose";
+import Price from "./Price";
+import AddPrice from "./AddPrice";
+import EditPrice from "./EditPrice";
+import ViewPrice from "./ViewPrice";
+import AdditionalService from "./AdditionalService";
 
 const Admin = () => {
   const sidebar = useDisclosure();
@@ -379,9 +386,33 @@ const Admin = () => {
         >
           Contact
         </NavItem>
-       
-       
-       
+        <NavItem
+          _hover={{ bgColor: "black", color: "#ADD8E6" }}
+          icon={FaIndianRupeeSign}
+          onClick={() => {
+            sidebar.onClose();
+            navigate("/admin/price");
+          }}>
+          Price
+        </NavItem>
+        <NavItem
+          _hover={{ bgColor: "black", color: "#ADD8E6" }}
+          icon={FaIndianRupeeSign}
+          onClick={() => {
+            sidebar.onClose();
+            navigate("/admin/service");
+          }}>
+          Price
+        </NavItem>
+        <NavItem
+          _hover={{ bgColor: "black", color: "#ADD8E6" }}
+          icon={AiFillCustomerService}
+          onClick={() => {
+            sidebar.onClose();
+            navigate("/admin/service");
+          }}>
+          Additional Service
+        </NavItem>
       </Flex>
     </Box>
   );
@@ -568,6 +599,12 @@ const Admin = () => {
             <Route path="/page/topproduct" element={<TopProducts />} />
             <Route path="/inquiry" element={<Inquiry />} />
             <Route path="/inquiry/:id" element={<ViewInquiry />} />
+            <Route path="/price" element={<Price/>} />
+            <Route path="/price/:id" element={<ViewPrice/>} />
+            <Route path="/price/add" element={<AddPrice/>} />
+            <Route path="/price/edit/:id" element={<EditPrice/>}  />
+            <Route path="/service"  element={<AdditionalService/>} />
+
           </Routes>
           <Box rounded="md" h="" />
         </Box>

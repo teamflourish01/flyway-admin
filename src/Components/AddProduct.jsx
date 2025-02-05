@@ -158,48 +158,45 @@ const AddProduct = () => {
     e.preventDefault();
     let dup = { ...product };
     ///// image upload here
+    let formData = new FormData();
 
     let newSlug = generateSlug(slug);
     dup.slug = newSlug;
     dup.text1 = text1;
     dup.text2 = text2;
     dup.text3 = text3;
-    debugger;
-    //  for(let x of image){
-    //   formData.append("image",x)
-    // }
-    console.log(dup, "before");
-
-    let formData = new FormData();
-
+    if(image.length>0){
+      for(let x of image){
+       formData.append("image",x)
+     }
+    }
     formData.append("dup", JSON.stringify(dup));
-    console.log(formData.entries());
+    // console.log(formData.entries());
 
     try {
       let res = await axios.post(`${url}/product/add`, formData );
-      console.log(res, "res");
 
-      console.log(res.ok);
-      // if (res.ok) {
-      //   toast({
-      //     title: "Product Added",
-      //     description: data.msg,
-      //     status: "success",
-      //     position: "top",
-      //     duration: 7000,
-      //     isClosable: true,
-      //   });
-      //   navigate("/admin/product");
-      // } else {
-      //   toast({
-      //     title: "Product Not Added ",
-      //     description: data.msg,
-      //     status: "error",
-      //     position: "top",
-      //     duration: 7000,
-      //     isClosable: true,
-      //   });
-      // }
+      console.log(res,"res");
+      if (res.status==200) {
+        toast({
+          title: "Product Added",
+          description: res.data.msg,
+          status: "success",
+          position: "top",
+          duration: 7000,
+          isClosable: true,
+        });
+        navigate("/admin/product");
+      } else {
+        toast({
+          title: "Product Not Added ",
+          description: res.data.msg,
+          status: "error",
+          position: "top",
+          duration: 7000,
+          isClosable: true,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -307,6 +304,7 @@ const AddProduct = () => {
                 onChange={(e) => handleChange(e)}
               />
             </FormControl>
+            <br />
           </Box>
           <Box
             backgroundColor={"white"}
