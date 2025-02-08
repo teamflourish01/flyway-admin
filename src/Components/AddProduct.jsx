@@ -6,6 +6,7 @@ import {
   FormLabel,
   Image,
   Input,
+  SimpleGrid,
   Spinner,
   Table,
   Tbody,
@@ -18,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosRemove } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -26,6 +27,8 @@ import EditPermalink from "./EditPermalink";
 import generateSlug from "../util/generateSlug";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
+import switchAudio from "../audio/light-switch.mp3";
+import "../styles/checkbox.css";
 
 const AddProduct = () => {
   const url = process.env.REACT_APP_DEV_URL;
@@ -44,6 +47,7 @@ const AddProduct = () => {
   const [detail, setDetail] = useState({});
   const [detailParameter, setDetailParameter] = useState("");
   const [detailValue, setDetailValue] = useState("");
+  const [service, setService] = useState([]);
   const [product, setProduct] = useState({
     name: "",
     category: "",
@@ -56,6 +60,8 @@ const AddProduct = () => {
     slug: "",
     meta_title: "",
     meta_description: "",
+    price: [],
+    service: [],
   });
   const toolbarOptions = [
     ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -86,7 +92,9 @@ const AddProduct = () => {
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
   const [text3, setText3] = useState("");
+  const [price, setPrice] = useState([]);
   const navigate = useNavigate();
+  let audio = new Audio(switchAudio);
 
   let formData = new FormData();
   const getCategory = async () => {
@@ -165,19 +173,19 @@ const AddProduct = () => {
     dup.text1 = text1;
     dup.text2 = text2;
     dup.text3 = text3;
-    if(image.length>0){
-      for(let x of image){
-       formData.append("image",x)
-     }
+    if (image.length > 0) {
+      for (let x of image) {
+        formData.append("image", x);
+      }
     }
     formData.append("dup", JSON.stringify(dup));
     // console.log(formData.entries());
 
     try {
-      let res = await axios.post(`${url}/product/add`, formData );
+      let res = await axios.post(`${url}/product/add`, formData);
 
-      console.log(res,"res");
-      if (res.status==200) {
+      console.log(res, "res");
+      if (res.status == 200) {
         toast({
           title: "Product Added",
           description: res.data.msg,
@@ -201,9 +209,88 @@ const AddProduct = () => {
       console.log(error);
     }
   };
+  const handleServiceCheck = (e) => {
+    audio.play();
+    let updatedProduct = [...product.service];
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setProduct({ ...product, service: updatedProduct });
+  };
+  const handleMenuCheck = (e) => {
+    audio.play();
+    let updatedProduct = [...product.price];
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setProduct({ ...product, price: updatedProduct });
+  };
+
+  const getServiceCheck = useCallback(
+    (id) => {
+      let exist = product.service?.findIndex((e) => e._id === id);
+      if (exist > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [product.service]
+  );
+  const getMenuCheck = useCallback(
+    (id) => {
+      let exist = product.price?.findIndex((e) => e._id === id);
+      if (exist > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [product.price]
+  );
+  const getData = async () => {
+    try {
+      let data = await fetch(`${url}/price`);
+      data = await data.json();
+      console.log(data.data);
+      setPrice(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getService = async () => {
+    try {
+      let data = await fetch(`${url}/service`);
+      data = await data.json();
+      console.log(data.data);
+      setService(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getCategory();
+    getData();
+    getService();
   }, []);
   return (
     <Box p="4">
@@ -352,6 +439,70 @@ const AddProduct = () => {
                 Should Be Less than 500KB and 200x200px size will allow Only
               </Text>
             </FormControl>
+            <FormControl>
+              <FormLabel>Price</FormLabel>
+              <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 4]}
+                spacing={"40px"}
+              >
+                {price?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
+                            style={{}}
+                            type="checkbox"
+                            onChange={() => handleCheck(x)}
+                            checked={getCheck(x._id)}
+                          /> */}
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleMenuCheck(x)}
+                          checked={getMenuCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Service</FormLabel>
+
+              <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 4]}
+                spacing={"40px"}
+              >
+                {service?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
+                            style={{}}
+                            type="checkbox"
+                            onChange={() => handleCheck(x)}
+                            checked={getCheck(x._id)}
+                          /> */}
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleServiceCheck(x)}
+                          checked={getServiceCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+            </FormControl>
+
             <FormControl>
               <FormLabel color={"#add8e6"}>First Text</FormLabel>
               <ReactQuill

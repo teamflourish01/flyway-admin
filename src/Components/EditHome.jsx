@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
@@ -14,8 +14,11 @@ import {
   Spinner,
   useToast,
   Text,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { MdDelete } from "react-icons/md";
+import "../styles/checkbox.css";
+import switchAudio from "../audio/light-switch.mp3";
 
 const EditHome = () => {
   const { id } = useParams();
@@ -30,22 +33,32 @@ const EditHome = () => {
   const [logoImg, setlogoImg] = useState([]);
   const toast = useToast();
   const Navigate = useNavigate();
+  const [product,setProduct]=useState([])
   const [isLoading, setIsLoading] = useState(false);
   const url = process.env.REACT_APP_DEV_URL;
+          let audio = new Audio(switchAudio);
+  
 
   const getHomebyID = async () => {
     try {
       const response = await fetch(`${url}/home/${id}`);
       const data = await response.json();
-      setItem(data.data);
+      setItem(data.data );
       console.log(data.data,"item");
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    getHomebyID();
-  }, [id]);
+
+  const getProduct=async()=>{
+    try {
+      let data=await fetch(`${url}/product`)
+      data=await data.json()
+      setProduct(data.data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // edit logic
 
@@ -191,11 +204,10 @@ const EditHome = () => {
 
   const handleInput = (e) => {
     const { name, value } = e.target;
-
     setItem({ ...item, [name]: value });
   };
 
-  
+
 
   const handleSubmit = async (e) => {
     const formData = new FormData();
@@ -267,6 +279,79 @@ const EditHome = () => {
       setIsLoading(false);
     }
   };
+  const handleArrivalCheck=(e)=>{
+    audio.play();
+    console.log(item?.best_seller);
+    
+    let updatedProduct = [...item?.new_arrival ] ||[];
+    console.log(updatedProduct,"updatedProduct");
+    
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setItem({ ...item, new_arrival: updatedProduct });
+  }
+
+  const handleMenuCheck = (e) => {
+    audio.play();
+    console.log(item?.best_seller);
+    
+    let updatedProduct = [...item?.best_seller ] ||[];
+    console.log(updatedProduct,"updatedProduct");
+    
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setItem({ ...item, best_seller: updatedProduct });
+  };
+      const getMenuCheck = useCallback(
+        (id) => {
+          let exist = item?.best_seller?.findIndex((e) => e._id === id);
+          if (exist > -1) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        [item?.best_seller]
+      );
+
+      const getArrivalCheck=useCallback(
+        (id) => {
+          let exist = item?.new_arrival?.findIndex((e) => e._id === id);
+          if (exist > -1) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        [item?.new_arrival]
+      );
+     
+      useEffect(()=>{
+        getProduct()
+      },[])
+  useEffect(() => {
+    getHomebyID();
+  }, [id]);
 
   return (
     <>
@@ -294,7 +379,7 @@ const EditHome = () => {
                   variant={"flushed"}
                   placeholder="Enter your Heading"
                   name="meta_title"
-                  value={item.meta_title}
+                  value={item?.meta_title}
                   onChange={handleInput}
                   mb={2}
                 />
@@ -308,7 +393,7 @@ const EditHome = () => {
                   placeholder="Enter your Description"
                   mb={4}
                   name="meta_description"
-                  value={item.meta_description}
+                  value={item?.meta_description}
                   onChange={handleInput}
                 />
               </FormControl>
@@ -338,7 +423,7 @@ const EditHome = () => {
                   placeholder="Enter your Description"
                   mb={4}
                   name="banner_text"
-                  value={item.banner_text}
+                  value={item?.banner_text}
                   onChange={handleInput}
                 />
               </FormControl>
@@ -405,7 +490,7 @@ const EditHome = () => {
                             }}
                           />
                           <Input
-                            value={item.bannerimg_alt[i]}
+                            value={item?.bannerimg_alt[i]}
                             onChange={(event) => handleBnrImgTextData(event, i)}
                           />
                         </Box>
@@ -471,6 +556,68 @@ const EditHome = () => {
             w={["100%", "100%", "100%", "100%", "100%"]}
             borderRadius={"20px"}
           >
+          <FormControl>
+            <FormLabel>Best Seller</FormLabel>
+            <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 3]}
+                spacing={"40px"}
+              >
+                {product?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
+                            style={{}}
+                            type="checkbox"
+                            onChange={() => handleCheck(x)}
+                            checked={getCheck(x._id)}
+                          /> */}
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleMenuCheck(x)}
+                          checked={getMenuCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+          </FormControl>
+          <FormControl>
+            <FormLabel>New Arrival</FormLabel>
+            <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 3]}
+                spacing={"40px"}
+              >
+                {product?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
+                            style={{}}
+                            type="checkbox"
+                            onChange={() => handleCheck(x)}
+                            checked={getCheck(x._id)}
+                          /> */}
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleArrivalCheck(x)}
+                          checked={getArrivalCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+          </FormControl>
             <form encType="multipart/form-data">
               <br />
               <FormControl>
@@ -520,7 +667,7 @@ const EditHome = () => {
                       <Flex key={i} alignItems="center" position="relative">
                         <Image src={`${url}/home/${e}`} w={"200px"} />
                         <Input
-                          value={item.gallery_alt[i]}
+                          value={item?.gallery_alt[i]}
                           onChange={(event) => handleTfimgText(event, i)}
                           maxLength={15}
                         />

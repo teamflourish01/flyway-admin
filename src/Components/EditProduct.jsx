@@ -6,6 +6,7 @@ import {
   FormLabel,
   Image,
   Input,
+  SimpleGrid,
   Spinner,
   Table,
   Tbody,
@@ -18,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosRemove } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
@@ -26,6 +27,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import EditPermalink from "./EditPermalink";
 import generateSlug from "../util/generateSlug";
 import ReactQuill from "react-quill";
+import "../styles/checkbox.css";
+import switchAudio from "../audio/light-switch.mp3";
+
 
 const EditProduct = () => {
   const { slugname } = useParams();
@@ -53,6 +57,12 @@ const EditProduct = () => {
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
   const [text3, setText3] = useState("");
+    const [price, setPrice] = useState([]);
+      const [service, setService] = useState([]);
+        let audio = new Audio(switchAudio);
+      
+    
+  
 
   const url = process.env.REACT_APP_DEV_URL;
 
@@ -267,10 +277,91 @@ const EditProduct = () => {
       });
     }
   };
+  const handleServiceCheck = (e) => {
+    audio.play();
+    let updatedProduct = [...product.service];
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setProduct({ ...product, service: updatedProduct });
+  };
+  const handleMenuCheck = (e) => {
+    audio.play();
+    
+    let updatedProduct = [...product.price];
+    console.log(updatedProduct,"updatedProduct");
+    
+    let index = updatedProduct?.findIndex((i) => i._id == e._id);
+    console.log(index);
+    if (index > -1) {
+      updatedProduct.splice(index, 1);
+    } else {
+      if (updatedProduct.length >= 4) {
+        updatedProduct.pop();
+      } else {
+        // setProduct([...product, e._id]);
+        updatedProduct.push(e);
+      }
+    }
+    setProduct({ ...product, price: updatedProduct });
+  };
+    const getServiceCheck = useCallback(
+      (id) => {
+        let exist = product.service?.findIndex((e) => e._id === id);
+        if (exist > -1) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      [product.service]
+    );
+    const getMenuCheck = useCallback(
+      (id) => {
+        let exist = product.price?.findIndex((e) => e._id === id);
+        if (exist > -1) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      [product.price]
+    );
+  const getData = async () => {
+    try {
+      let data = await fetch(`${url}/price`);
+      data = await data.json();
+      console.log(data.data);
+      setPrice(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getService = async () => {
+    try {
+      let data = await fetch(`${url}/service`);
+      data = await data.json();
+      console.log(data.data);
+      setService(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getProduct();
     getCategory();
+    getData()
+    getService()
   }, []);
 
   return (
@@ -336,7 +427,7 @@ const EditProduct = () => {
                   {product.category?.name}
                 </option>
                 {category &&
-                  category.map((e) => <option value={e?._id}>{e.name}</option>)}
+                  category.map((e) => <option key={e?._id} value={e?._id}>{e.name}</option>)}
               </select>
             </FormControl>
             <br />
@@ -413,6 +504,69 @@ const EditProduct = () => {
                 Should Be Less than 500KB and 500x500px size will allow Only
               </Text>
             </FormControl>
+            <FormControl>
+              <FormLabel>Price</FormLabel>
+              <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 4]}
+                spacing={"40px"}
+              >
+                {price?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
+                            style={{}}
+                            type="checkbox"
+                            onChange={() => handleCheck(x)}
+                            checked={getCheck(x._id)}
+                          /> */}
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleMenuCheck(x)}
+                          checked={getMenuCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+            </FormControl>
+             <FormControl>
+                          <FormLabel>Service</FormLabel>
+            
+                          <SimpleGrid
+                            ml={["10%"]}
+                            columns={[1, 2, 3, 3, 4]}
+                            spacing={"40px"}
+                          >
+                            {service?.map((x, i) => (
+                              <Flex gap="20px" alignItems={"center"}>
+                                {/* <input
+                                        style={{}}
+                                        type="checkbox"
+                                        onChange={() => handleCheck(x)}
+                                        checked={getCheck(x._id)}
+                                      /> */}
+                                <div class="checkbox-wrapper-55">
+                                  <label class="rocker rocker-small">
+                                    <input
+                                      type="checkbox"
+                                      onChange={() => handleServiceCheck(x)}
+                                      checked={getServiceCheck(x._id)}
+                                    />
+                                    <span class="switch-left">Yes</span>
+                                    <span class="switch-right">No</span>
+                                  </label>
+                                </div>
+                                <Text>{x?.name}</Text>
+                              </Flex>
+                            ))}
+                          </SimpleGrid>
+                        </FormControl>
             <FormControl>
               <FormLabel color={"#add8e6"}>First Text</FormLabel>
               <ReactQuill
