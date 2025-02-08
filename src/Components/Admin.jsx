@@ -128,6 +128,10 @@ import AddOurteam from "./AddOurteam";
 import EditOurteam from "./EditOurteam";
 import ViewOurteam from "./ViewOurteam";
 import EditPrivacypolicey from "./EditPrivacypolicey";
+import { RiCustomerServiceFill } from "react-icons/ri";
+import AddService from "./AddService";
+import ViewService from "./ViewService";
+import EditService from "./EditService";
 
 
 const Admin = () => {
@@ -413,15 +417,7 @@ const Admin = () => {
           }}>
           Price
         </NavItem>
-        <NavItem
-          _hover={{ bgColor: "black", color: "#ADD8E6" }}
-          icon={FaIndianRupeeSign}
-          onClick={() => {
-            sidebar.onClose();
-            navigate("/admin/service");
-          }}>
-          Price
-        </NavItem>
+        
         <NavItem
           _hover={{ bgColor: "black", color: "#ADD8E6" }}
           icon={AiFillCustomerService}
@@ -630,6 +626,11 @@ const Admin = () => {
             <Route path="/price/add" element={<AddPrice/>} />
             <Route path="/price/edit/:id" element={<EditPrice/>}  />
             <Route path="/service"  element={<AdditionalService/>} />
+            <Route path="/service/add"  element={<AddService/>} />
+            <Route path="/service/:id"  element={<ViewService/>} />
+            <Route path="/service/edit/:id" element={<EditService/>}/>
+
+
 
 
             <Route path="/privacy" element={<EditPrivacypolicey />} />
