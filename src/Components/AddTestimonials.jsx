@@ -21,6 +21,7 @@ const AddTestimonials = () => {
     name: "",
     designation: "",
     text: "",
+    ratting:"",
     image: "",
   });
   const [selectedImages, setSelectedImages] = useState("");
@@ -62,6 +63,7 @@ const AddTestimonials = () => {
       formdata.append("name", item.name);
       formdata.append("text", item.text);
       formdata.append("image", ctimage);
+      formdata.append("ratting",item?.ratting);
 
       let res = await axios.post(`${url}/testimonials/add`, formdata, {
         headers: {
@@ -132,7 +134,22 @@ const AddTestimonials = () => {
                   maxLength={40}
                 />
               </FormControl>
-        
+              <FormControl isRequired mb={4}>
+                <FormLabel htmlFor="ratting" color={"#add8e6"}>
+                  Ratting
+                </FormLabel>
+                <Input
+                  variant="flushed"
+                  id="ratting"
+                  type="text"
+                  placeholder="Enter your Rattings"
+                  mb={4}
+                  name="ratting"
+                  value={item?.ratting}
+                  onChange={handleInput}
+                  maxLength={40}
+                />
+              </FormControl>
               <FormControl isRequired>
                 <FormLabel htmlFor="text" color={"#add8e6"}>
                   Testimonials Description

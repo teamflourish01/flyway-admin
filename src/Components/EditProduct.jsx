@@ -30,7 +30,6 @@ import ReactQuill from "react-quill";
 import "../styles/checkbox.css";
 import switchAudio from "../audio/light-switch.mp3";
 
-
 const EditProduct = () => {
   const { slugname } = useParams();
   const [product, setProduct] = useState({});
@@ -57,12 +56,9 @@ const EditProduct = () => {
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
   const [text3, setText3] = useState("");
-    const [price, setPrice] = useState([]);
-      const [service, setService] = useState([]);
-        let audio = new Audio(switchAudio);
-      
-    
-  
+  const [price, setPrice] = useState([]);
+  const [service, setService] = useState([]);
+  let audio = new Audio(switchAudio);
 
   const url = process.env.REACT_APP_DEV_URL;
 
@@ -296,10 +292,10 @@ const EditProduct = () => {
   };
   const handleMenuCheck = (e) => {
     audio.play();
-    
+
     let updatedProduct = [...product.price];
-    console.log(updatedProduct,"updatedProduct");
-    
+    console.log(updatedProduct, "updatedProduct");
+
     let index = updatedProduct?.findIndex((i) => i._id == e._id);
     console.log(index);
     if (index > -1) {
@@ -314,28 +310,28 @@ const EditProduct = () => {
     }
     setProduct({ ...product, price: updatedProduct });
   };
-    const getServiceCheck = useCallback(
-      (id) => {
-        let exist = product.service?.findIndex((e) => e._id === id);
-        if (exist > -1) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      [product.service]
-    );
-    const getMenuCheck = useCallback(
-      (id) => {
-        let exist = product.price?.findIndex((e) => e._id === id);
-        if (exist > -1) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      [product.price]
-    );
+  const getServiceCheck = useCallback(
+    (id) => {
+      let exist = product.service?.findIndex((e) => e._id === id);
+      if (exist > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [product.service]
+  );
+  const getMenuCheck = useCallback(
+    (id) => {
+      let exist = product.price?.findIndex((e) => e._id === id);
+      if (exist > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [product.price]
+  );
   const getData = async () => {
     try {
       let data = await fetch(`${url}/price`);
@@ -360,14 +356,14 @@ const EditProduct = () => {
   useEffect(() => {
     getProduct();
     getCategory();
-    getData()
-    getService()
+    getData();
+    getService();
   }, []);
 
   return (
     <Box>
       <form onSubmit={handleUpdate} encType="multipart/form-data">
-        <Flex justifyContent={"space-around"} gap="40px">
+        <Flex justifyContent={"space-around"} gap="20px" padding={"10px"}>
           <Box
             backgroundColor={"white"}
             w="700px"
@@ -423,12 +419,68 @@ const EditProduct = () => {
                   setProduct({ ...product, category: e.target.value })
                 }
               >
-                <option value={product.category?._id}>
-                  {product.category?.name}
+                <option value={product?.category?._id}>
+                  {product?.category?.name}
                 </option>
                 {category &&
-                  category.map((e) => <option key={e?._id} value={e?._id}>{e.name}</option>)}
+                  category.map((e) => (
+                    <option key={e?._id} value={e?._id}>
+                      {e.name}
+                    </option>
+                  ))}
               </select>
+            </FormControl>
+            <br />
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Language</FormLabel>
+              <select
+                style={{
+                  width: "200px",
+                  padding: "10px",
+                  margin: "10px",
+                  border: "1px solid #add8e6",
+                  borderRadius: "20px",
+                }}
+                onChange={(e) => {
+                  setProduct({ ...product, language: e.target.value });
+                }}
+              >
+                <option value={product?.language}>{product?.language}</option>
+                <option value="English">English</option>
+                <option value="Gujarati">Gujarati</option>
+              </select>
+            </FormControl>
+            <br />
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Type</FormLabel>
+              <select
+                style={{
+                  width: "200px",
+                  padding: "10px",
+                  margin: "10px",
+                  border: "1px solid #add8e6",
+                  borderRadius: "20px",
+                }}
+                onChange={(e) => {
+                  setProduct({ ...product, type: e.target.value });
+                }}
+              >
+                <option value={product?.type}>{product?.type}</option>
+                <option value="Video">Video</option>
+                <option value="PDF">PDF</option>
+              </select>
+            </FormControl>
+            <br />
+            <FormControl >
+              <FormLabel>Video Url</FormLabel>
+              <Input
+                variant={"flushed"}
+                type="text"
+                name="videoLink"
+                value={product?.videoLink}
+                onChange={(e) => handleChange(e)}
+                maxLength={40}
+              />
             </FormControl>
             <br />
             <FormControl isRequired>
@@ -447,6 +499,7 @@ const EditProduct = () => {
             boxShadow="rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
             padding={"20px"}
             borderRadius={"20px"}
+            width={"50%"}
           >
             <FormControl isRequired>
               <FormLabel>Product Image</FormLabel>
@@ -535,38 +588,38 @@ const EditProduct = () => {
                 ))}
               </SimpleGrid>
             </FormControl>
-             <FormControl>
-                          <FormLabel>Service</FormLabel>
-            
-                          <SimpleGrid
-                            ml={["10%"]}
-                            columns={[1, 2, 3, 3, 4]}
-                            spacing={"40px"}
-                          >
-                            {service?.map((x, i) => (
-                              <Flex gap="20px" alignItems={"center"}>
-                                {/* <input
+            <FormControl>
+              <FormLabel>Service</FormLabel>
+
+              <SimpleGrid
+                ml={["10%"]}
+                columns={[1, 2, 3, 3, 4]}
+                spacing={"40px"}
+              >
+                {service?.map((x, i) => (
+                  <Flex gap="20px" alignItems={"center"}>
+                    {/* <input
                                         style={{}}
                                         type="checkbox"
                                         onChange={() => handleCheck(x)}
                                         checked={getCheck(x._id)}
                                       /> */}
-                                <div class="checkbox-wrapper-55">
-                                  <label class="rocker rocker-small">
-                                    <input
-                                      type="checkbox"
-                                      onChange={() => handleServiceCheck(x)}
-                                      checked={getServiceCheck(x._id)}
-                                    />
-                                    <span class="switch-left">Yes</span>
-                                    <span class="switch-right">No</span>
-                                  </label>
-                                </div>
-                                <Text>{x?.name}</Text>
-                              </Flex>
-                            ))}
-                          </SimpleGrid>
-                        </FormControl>
+                    <div class="checkbox-wrapper-55">
+                      <label class="rocker rocker-small">
+                        <input
+                          type="checkbox"
+                          onChange={() => handleServiceCheck(x)}
+                          checked={getServiceCheck(x._id)}
+                        />
+                        <span class="switch-left">Yes</span>
+                        <span class="switch-right">No</span>
+                      </label>
+                    </div>
+                    <Text>{x?.name}</Text>
+                  </Flex>
+                ))}
+              </SimpleGrid>
+            </FormControl>
             <FormControl>
               <FormLabel color={"#add8e6"}>First Text</FormLabel>
               <ReactQuill

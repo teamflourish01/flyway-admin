@@ -117,7 +117,6 @@ const Testimonials = () => {
             <Tr>
               <Th color={"#add8e6"}>#</Th>
               <Th color={"#add8e6"}>Name</Th>
-              <Th color={"#add8e6"}>Designation</Th>
               <Th color={"#add8e6"}>Action</Th>
             </Tr>
           </Thead>
@@ -127,7 +126,6 @@ const Testimonials = () => {
                 <Tr key={e._id}>
                   <Td> {i + 1} </Td>
                   <Td>{e?.name}</Td>
-                  <Td>{e?.designation}</Td>
                   <Td>
                     <ButtonGroup>
                       <Button

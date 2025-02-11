@@ -147,14 +147,14 @@ const ViewTestimonials = () => {
       <Text fontWeight={"semibold"} fontSize={"xl"}>
         Updated at
       </Text>
-      {product?.modifiedAt && (
+      {product?.updatedAt && (
         <Box
           padding="10px 20px"
           width="50%"
           bgColor={"#eef1f4"}
           fontSize={"medium"}
         >
-          {new Date(product.modifiedAt).toLocaleString("en-IN", {
+          {new Date(product?.updatedAt).toLocaleString("en-IN", {
             timeZone: "Asia/Kolkata",
           })}
         </Box>
