@@ -62,6 +62,9 @@ const AddProduct = () => {
     meta_description: "",
     price: [],
     service: [],
+    language:"",
+    type:"",
+    videoLink:""
   });
   const toolbarOptions = [
     ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -358,7 +361,7 @@ const AddProduct = () => {
           />
         </FormControl>
         <br /> */}
-            <FormControl>
+         <FormControl>
               <FormLabel color={"#add8e6"}>Category</FormLabel>
               <select
                 style={{
@@ -380,6 +383,69 @@ const AddProduct = () => {
                     </option>
                   ))}
               </select>
+            </FormControl>
+            <br />
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Language</FormLabel>
+              <select
+                style={{
+                  width: "200px",
+                  padding: "10px",
+                  margin: "10px",
+                  border: "1px solid #add8e6",
+                  borderRadius: "20px",
+                }}
+                onChange={(e) => {
+                  setProduct({ ...product, language: e.target.value });
+                }}
+              >
+                <option>Select</option>
+                    <option value="English">
+                      English
+                    </option>
+                    <option value="Gujarati">
+                      Gujarati
+                    </option>
+              </select>
+            </FormControl>
+            <br />
+            <FormControl>
+              <FormLabel color={"#add8e6"}>Type</FormLabel>
+              <select
+                style={{
+                  width: "200px",
+                  padding: "10px",
+                  margin: "10px",
+                  border: "1px solid #add8e6",
+                  borderRadius: "20px",
+                }}
+                onChange={(e) => {
+                  setProduct({ ...product, type: e.target.value });
+                }}
+              >
+                <option>Select</option>
+                    <option value="Video">
+                      Video
+                    </option>
+                    <option value="PDF">
+                      PDF
+                    </option>
+              </select>
+            </FormControl>
+            <br />
+            <FormControl isRequired>
+              <FormLabel color={"#add8e6"}>Video Url</FormLabel>
+              <Input
+                
+                variant={"flushed"}
+                type="text"
+                name="videoLink"
+                value={product.videoLink}
+                onChange={(e) => {
+                  handleChange(e)
+                }}
+                maxLength={40}
+              />
             </FormControl>
             <br />
             <FormControl isRequired>

@@ -76,6 +76,7 @@ const EditTestimonials = () => {
 
       formData.append("name", item.name);
       formData.append("text", item.text);
+      formData.append("ratting",item?.ratting);
 
       if (singleImg) {
         formData.append("image", singleImg);
@@ -153,6 +154,22 @@ const EditTestimonials = () => {
                   mb={4}
                   name="name"
                   value={item.name}
+                  onChange={handleInput}
+                  maxLength={40}
+                />
+              </FormControl>
+              <FormControl isRequired mb={4}>
+                <FormLabel htmlFor="ratting" color={"#add8e6"}>
+                  Ratting
+                </FormLabel>
+                <Input
+                  variant="flushed"
+                  id="ratting"
+                  type="text"
+                  placeholder="Enter your Ratting"
+                  mb={4}
+                  name="ratting"
+                  value={item?.ratting}
                   onChange={handleInput}
                   maxLength={40}
                 />

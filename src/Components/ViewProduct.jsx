@@ -142,6 +142,18 @@ const ViewProduct = () => {
       </Text>
       <br />
       <Text fontWeight={"semibold"} fontSize={"xl"}>
+        Video Url
+      </Text>
+        <Text
+          padding="10px 20px"
+          width="50%"
+          bgColor={"#eef1f4"}
+          fontSize={"medium"}
+        >
+          {product?.videoLink}
+        </Text>
+      <br />
+      <Text fontWeight={"semibold"} fontSize={"xl"}>
         Description
       </Text>
       <Textarea
