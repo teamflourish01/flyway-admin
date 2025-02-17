@@ -18,7 +18,7 @@ import {
 import { MdDelete } from "react-icons/md";
 import ReactQuill from "react-quill";
 
-const EditPrivacypolicey = () => {
+const EditTermsCondition = () => {
   const { id } = useParams();
   const [item, setItem] = useState({
     content: "",
@@ -53,7 +53,7 @@ const EditPrivacypolicey = () => {
   };
   const getAboutusById = async () => {
     try {
-      const response = await fetch(`${url}/policy/${id}`);
+      const response = await fetch(`${url}/termscondition/${id}`);
       const data = await response.json();
       setItem(data.data);
       console.log("State ById", item);
@@ -66,16 +66,6 @@ const EditPrivacypolicey = () => {
   }, [id]);
   
 
-  // const handleInput = (e) => {
-  //   const { name, value } = e.target;
-
-  //   setItem({ ...item, [name]: value });
-  //   // setItem((prevItem) => ({
-  //   //   ...prevItem,
-  //   //   [name]: value,
-  //   // }));
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -85,7 +75,7 @@ const EditPrivacypolicey = () => {
       return;
     }
     try {
-      const response = await fetch(`${url}/policy/edit/${id}`, {
+      const response = await fetch(`${url}/termscondition/edit/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -182,4 +172,4 @@ const EditPrivacypolicey = () => {
   );
 };
 
-export default EditPrivacypolicey;
+export default EditTermsCondition;

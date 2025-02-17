@@ -18,7 +18,7 @@ import {
 import { MdDelete } from "react-icons/md";
 import ReactQuill from "react-quill";
 
-const EditPrivacypolicey = () => {
+const EditRefundpolicey = () => {
   const { id } = useParams();
   const [item, setItem] = useState({
     content: "",
@@ -53,7 +53,7 @@ const EditPrivacypolicey = () => {
   };
   const getAboutusById = async () => {
     try {
-      const response = await fetch(`${url}/policy/${id}`);
+      const response = await fetch(`${url}/refundpolicy/${id}`);
       const data = await response.json();
       setItem(data.data);
       console.log("State ById", item);
@@ -85,7 +85,7 @@ const EditPrivacypolicey = () => {
       return;
     }
     try {
-      const response = await fetch(`${url}/policy/edit/${id}`, {
+      const response = await fetch(`${url}/refundpolicy/edit/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -182,4 +182,4 @@ const EditPrivacypolicey = () => {
   );
 };
 
-export default EditPrivacypolicey;
+export default EditRefundpolicey;

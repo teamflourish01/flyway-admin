@@ -132,6 +132,8 @@ import { RiCustomerServiceFill } from "react-icons/ri";
 import AddService from "./AddService";
 import ViewService from "./ViewService";
 import EditService from "./EditService";
+import EditTermsCondition from "./EditTermsCondition";
+import EditRefundpolicey from "./EditRefundpolicey";
 
 
 const Admin = () => {
@@ -635,6 +637,8 @@ const Admin = () => {
 
             <Route path="/privacy" element={<EditPrivacypolicey />} />
             <Route path="/privacy/edit/:id" element={<EditPrivacypolicey />} />
+            <Route path="/terms/edit/:id" element={<EditTermsCondition />} />
+            <Route path="/refund/edit/:id" element={<EditRefundpolicey />} />
 
           </Routes>
           <Box rounded="md" h="" />
