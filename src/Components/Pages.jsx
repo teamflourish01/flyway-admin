@@ -22,6 +22,8 @@ const Pages = () => {
   const [homeItem, sethomeItem] = useState([]);
   const [whyChooseUs, setWhyChooseUs] = useState([]);
   const [policy, setPolicy] = useState([]);
+  const [terms, setTerms] = useState([]);
+  const [refund, setRefund] = useState([]);
   const navigate = useNavigate();
   const url = process.env.REACT_APP_DEV_URL;
 
@@ -65,9 +67,31 @@ const Pages = () => {
     };
     const getPrivacyPolicyData = async () => {
       try {
-        let res = await fetch(`${url}/privacy`);        
+        let res = await fetch(`${url}/policy`);        
         let data = await res.json();
         setPolicy(data.data);
+        console.log("policy Data",data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const getTermsConditionData = async () => {
+      try {
+        let res = await fetch(`${url}/termscondition`);        
+        let data = await res.json();
+        setTerms(data.data);
+        console.log("policy Data",data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const getRefundPolicyData = async () => {
+      try {
+        let res = await fetch(`${url}/refundpolicy`);        
+        let data = await res.json();
+        setRefund(data.data);
         console.log("policy Data",data);
         
       } catch (error) {
@@ -79,6 +103,8 @@ const Pages = () => {
     getHome();
     getHomeBenifits();
     getPrivacyPolicyData();
+    getTermsConditionData();
+    getRefundPolicyData();
   }, []);
 
   return (
@@ -165,7 +191,7 @@ const Pages = () => {
             </Tr>
             <Tr>
               <Td> 4 </Td>
-              <Td>Privacy Policey</Td>
+              <Td>Privacy Policy</Td>
               <Td>
                 <ButtonGroup>
                   <Button
@@ -186,27 +212,19 @@ const Pages = () => {
             </Tr>
             <Tr>
               <Td> 5 </Td>
-              <Td> Home Our Products</Td>
+              <Td>Terms & Condition</Td>
               <Td>
                 <ButtonGroup>
-                  {/* <Button
-                    leftIcon={<ViewIcon />}
-                    bgColor={"black"}
-                    _hover={{ bgColor: "#add8e6", color: "black" }}
-                    variant="solid"
-                    color="#add8e6"
-                    onClick={() =>
-                      navigate(`/admin/page/ourproduct`)
-                    }
-                  >
-                    View
-                  </Button> */}
                   <Button
                     leftIcon={<BiEditAlt />}
                     border="1px solid #add8e6"
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
-                    onClick={() => navigate(`/admin/page/ourproduct`)}
+                    onClick={() =>
+                      navigate(
+                        `/admin/terms/edit/${terms.length > 0 && terms[0]._id}`
+                      )
+                    }
                   >
                     Edit
                   </Button>
@@ -215,27 +233,19 @@ const Pages = () => {
             </Tr>
             <Tr>
               <Td> 6 </Td>
-              <Td> Home Top Products</Td>
+              <Td>Refund Policy</Td>
               <Td>
                 <ButtonGroup>
-                  {/* <Button
-                    leftIcon={<ViewIcon />}
-                    bgColor={"black"}
-                    _hover={{ bgColor: "#add8e6", color: "black" }}
-                    variant="solid"
-                    color="#add8e6"
-                    onClick={() =>
-                      navigate(`/admin/page/ourproduct`)
-                    }
-                  >
-                    View
-                  </Button> */}
                   <Button
                     leftIcon={<BiEditAlt />}
                     border="1px solid #add8e6"
                     variant={"outline"}
                     _hover={{ bgColor: "#add8e6", color: "black" }}
-                    onClick={() => navigate(`/admin/page/topproduct`)}
+                    onClick={() =>
+                      navigate(
+                        `/admin/refund/edit/${refund.length > 0 && refund[0]._id}`
+                      )
+                    }
                   >
                     Edit
                   </Button>
